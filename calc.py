@@ -25,13 +25,23 @@ def get_memory():
         calculations.insert(END, '\n')
     calculations.config(state=DISABLED)
 
+
+def key_press(event):
+    key = event.char
+    code = event.keycode
+    if code == 13:
+        click_button('=')
+    elif code == 8:
+        click_button('<-')
+    else:
+        click_button(key)
+
 def click_button(btn_id: str):
 
     if len(calcs) == 0:
         if btn_id.isdigit():
             output(btn_id)
             calcs.append([btn_id])
-            print(calcs[-1])
 
     elif btn_id.isdigit() or btn_id == '.':
         match len(calcs[-1]):
@@ -111,9 +121,10 @@ def click_button(btn_id: str):
                 calcs[-1].append(num)
             case 3:
                 clear(True)
-                del calcs[-1][-1]
                 output(calcs[-1][0] + calcs[-1][1])
-                click_button("sqrt")
+                calcs[-1][-1] = sqrt(calcs[-1][-1])
+                output(calcs[-1][-1])
+                # click_button("sqrt")
             case 4:
                 clear(True)
                 output(calcs[-1][-1])
@@ -217,5 +228,8 @@ for r in range(len(buttons)):
         name = buttons[r][c]
         btn = ttk.Button(text=name, command=partial(click_button, name))
         btn.grid(row=r+1, column=c, ipadx=8, ipady=8, padx=2, pady=2, sticky=NSEW)
+
+root.bind('<BackSpace>', key_press)
+root.bind('<KeyPress>', key_press)
 
 root.mainloop()
