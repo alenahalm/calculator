@@ -13,11 +13,9 @@ def get_memory():
     
     calculations = Text(master=newWindow, font="Segoe 20", height=80)
     calculations.pack()
-    print(calcs[-1])
     copy = calcs.copy()
     copy.reverse()
     for each in copy:
-        print(each)
         for i in range(len(each)-1):
             calculations.insert(END, each[i])
         calculations.insert(END, '=')
@@ -42,23 +40,33 @@ def click_button(btn_id: str):
         if btn_id.isdigit():
             output(btn_id)
             calcs.append([btn_id])
-
+        
     elif btn_id.isdigit() or btn_id == '.':
+        out = True
         match len(calcs[-1]):
             case 1 | 3:
-                calcs[-1][-1] += btn_id
+                if calcs[-1][-1] == '0' and btn_id == '0':
+                    out = False
+                elif calcs[-1][-1] == '0' and btn_id != '0':
+                    out = True
+                    clear()
+                    calcs[-1][-1] = btn_id
+                else:
+                    calcs[-1][-1] += btn_id
             case 2:
                 calcs[-1].append(btn_id)
             case 4:
                 calcs.append([btn_id])
                 clear(True)
-        output(btn_id)
+        if out:
+            output(btn_id)
 
     elif btn_id in ops:
         match len(calcs[-1]):
             case 1:
                 calcs[-1].append(btn_id)
             case 2:
+                clear()
                 calcs[-1][-1] = btn_id
             case 3:
                 clear(True)
@@ -229,7 +237,12 @@ for r in range(len(buttons)):
         btn = ttk.Button(text=name, command=partial(click_button, name))
         btn.grid(row=r+1, column=c, ipadx=8, ipady=8, padx=2, pady=2, sticky=NSEW)
 
+def close(_):
+    root.destroy()
+
 root.bind('<BackSpace>', key_press)
 root.bind('<KeyPress>', key_press)
+root.bind('<Escape>', close)
+
 
 root.mainloop()
