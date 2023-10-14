@@ -37,7 +37,7 @@ def key_press(event):
 def click_button(btn_id: str):
 
     if len(calcs) == 0:
-        if btn_id.isdigit():
+        if btn_id.isdigit() or btn_id == '.':
             output(btn_id)
             calcs.append([btn_id])
         
@@ -45,12 +45,15 @@ def click_button(btn_id: str):
         out = True
         match len(calcs[-1]):
             case 1 | 3:
-                if calcs[-1][-1] == '0' and btn_id == '0':
+                if calcs[-1][-1] == '0' and btn_id == '0' or '.' in calcs[-1][-1] and btn_id == '.':
                     out = False
                 elif calcs[-1][-1] == '0' and btn_id != '0':
                     out = True
                     clear()
                     calcs[-1][-1] = btn_id
+                elif calcs[-1][-1][-1] == '.' and btn_id != '.':
+                    out = True
+                    calcs[-1][-1] += btn_id
                 else:
                     calcs[-1][-1] += btn_id
             case 2:
